@@ -7,142 +7,142 @@ description: Use when planning, scoping, reviewing, handing off, or closing impl
 
 ## Purpose
 
-本 Skill 定義 `ds-hero-builder` 的規劃、Agent handoff、Review 與收尾 workflow。
+This document defines the planning, Agent handoff, review, and closeout workflow for `ds-hero-builder`.
 
-核心分工固定為：
+The project roles are fixed as follows:
 
-- **Owner（Marc）＝裁決者**：決定產品需求、規則爭議、翻譯定稿與是否接受使用者體驗。
-- **Reviewer（ChatGPT）＝規劃者 + 審查者**：整理 authority、切 Batch、準備 Agent Contract、提出翻譯建議、審查 actual evidence、決定 PASS／BLOCKED／需要 Owner Decision，並授權 Git closeout。
-- **Agent（ChatGPT Codex）＝實作者**：依已固定 Contract 修改 repository、寫測試、執行驗證與 Git 動作；不自行創造產品規格或翻譯語意。
+- **Owner (Marc) = final decision-maker**: decides product requirements, Draw Steel rules disputes, final translation wording, and UX acceptance.
+- **Reviewer (ChatGPT) = planner + reviewer**: organizes authority, defines batches, prepares Agent contracts, proposes translations, reviews actual evidence, decides PASS / BLOCKED / OWNER DECISION REQUIRED, and authorizes Git closeout.
+- **Agent (ChatGPT Codex) = implementer**: modifies repository code/data/tests according to the approved contract and performs authorized verification and Git actions. The Agent does not invent product requirements, rules interpretations, or translation semantics.
 
-正常情況下，**產品 code／data 的 repository mutation 由 Agent 執行**。Reviewer 只有在 Owner 明確要求例外時才直接修改 repository。
+Under normal operation, **repository mutations to product code or data are performed by the Agent**. The Reviewer should modify the repository directly only when the Owner explicitly asks for an exception.
 
-> 原則：先固定 authority 與唯一 Batch，再用與風險相稱的最低足夠證據完成實作與 Review；不把「Agent 說完成了」當成證據。
+> Principle: first fix the authority and one coherent batch, then complete implementation and review with the minimum sufficient evidence appropriate to the actual risk. An Agent statement such as “done” or “all tests pass” is not independent evidence.
 
 ---
 
 ## 1. Load Authority
 
-開始規劃、Review、Agent 任務或收尾前，按下列優先序確認 authority：
+Before planning, review, Agent task preparation, or closeout, resolve authority in this order:
 
-1. **Owner 在目前對話／Batch 中最新的明確決定**。
-2. Repository 中已核准的 requirements／decision／ADR 文件（建立後適用）。
-3. **官方規則書**：
-   - Draw Steel Heroes **1.01b**；
-   - Summoner **v1.0b**；
-   - Beastheart **v1.0**。
-4. `VerisimLLC/draw-steel-data`：優先作為 structured data 與 identity／relationship 來源。
-5. `VerisimLLC/draw-steel-codex`：優先作為 character-builder behavior、implementation pattern 與規則實作參考。
-6. Reviewer／Agent inference。
+1. **The Owner's latest explicit decision in the current conversation or Batch.**
+2. Approved repository requirements, decision records, or ADRs, once they exist.
+3. **Official rules sources:**
+   - Draw Steel Heroes **1.01b**
+   - Summoner **v1.0b**
+   - Beastheart **v1.0**
+4. `VerisimLLC/draw-steel-data` as the preferred source for structured data, stable identities, and relationships.
+5. `VerisimLLC/draw-steel-codex` as a reference for character-builder behavior, implementation patterns, and existing rules implementation.
+6. Reviewer or Agent inference.
 
 ### Conflict rule
 
-- 官方規則書與 Codex data／Lua 衝突時，**規則書優先**，除非 Owner 明確裁決不同。
-- Codex repository 含有超出本專案 MVP 的內容；**不得因資料存在就自動納入產品 scope**。
-- 若 Agent 無法直接存取某個 authority，不猜測、不用搜尋片段偷偷替代；由 Reviewer 在 Batch Contract／Issue 中 freeze 必要的 exact rule excerpt、decision 或 expected behavior。
-- `PROJECT-STATUS` 類摘要永遠不取代 actual repository state。
+- If an official rulebook conflicts with Codex data or Lua behavior, **the rulebook wins**, unless the Owner explicitly rules otherwise.
+- The Codex repositories contain material outside this project's MVP. **The existence of upstream data does not automatically place it in scope.**
+- If the Agent cannot directly access an authority source, it must not guess or silently substitute a search snippet. The Reviewer must freeze the required rule excerpt, decision, or expected behavior in the Batch Contract / Issue.
+- Project-status summaries never override the actual repository state.
 
 ---
 
 ## 2. Current Product Guardrails
 
-在 Owner 尚未修改前，Reviewer 將以下視為 MVP guardrails：
+Until the Owner changes them, treat the following as the current MVP guardrails:
 
-- Web app；不要求玩家登入。
-- **只做 1 級創角**。
-- Content scope：**Heroes 1.01b + Summoner + Beastheart**。
-- 繁體中文為主；主要標題可中英對照。
-- 創角步驟持續攤在玩家面前；不是傳統「上一頁／下一頁」wizard。
-- 玩家可跳到其他已可進入步驟修改。
-- 不合法選項應 disabled／灰化；不能只在最後報錯。
-- 修改前置選擇若使後續資料失效，系統不得偷偷保留非法 state；後續步驟必須明確進入「需要修正」或清除已失效選擇。
-- 瀏覽器本機自動保存；關閉後可繼續。
-- 匯出：**HTML + JSON**。
-- JSON 可重新匯入並繼續編輯。
-- MVP **不做 PDF 匯出**。
-- MVP **不做 Codex import**。
+- The product is a web app; no account or login is required.
+- **Only level 1 character creation is in scope.**
+- Content scope is limited to **Heroes 1.01b + Summoner + Beastheart**.
+- Traditional Chinese (`zh-TW`) is the primary UI language; major titles may show Chinese and English together.
+- Character-creation steps remain visible to the player. This is **not** a previous/next wizard.
+- Players may jump to other available steps to revise choices.
+- Illegal options should be disabled / unavailable proactively rather than accepted and rejected only at final validation.
+- If an earlier choice invalidates later selections, the application must not silently retain illegal downstream state. The affected selections must be cleared or the relevant step must clearly become “needs correction.”
+- Browser-local auto-save is required so a player can close the site and continue later.
+- MVP export formats are **HTML + JSON**.
+- JSON must be importable back into the app and restore an editable character.
+- MVP does **not** include PDF export.
+- MVP does **not** include Codex import.
 
-這一節是 guardrail，不是要永久取代正式 requirements。當 repo 建立正式需求文件後，Skill 應改為 pointer，避免維護第二套詳細規格。
+This section is a temporary guardrail, not a permanent replacement for formal requirements. Once the repository contains an approved requirements document, this file should point to it instead of maintaining a second detailed specification.
 
 ---
 
 ## 3. Fix One Batch Contract
 
-每次需要 Agent 實作前，Reviewer 先固定一個 coherent、可獨立驗收的 Batch。
+Before any Agent implementation begins, the Reviewer must define one coherent, independently verifiable Batch.
 
-至少包含：
+At minimum, the Batch Contract must contain:
 
-- **Goal**：唯一可驗證結果。
-- **Authority**：本批依據的 Owner decision／rule source／repo document。
-- **Base**：branch + exact expected base SHA。
-- **In scope**。
-- **Out of scope**。
-- **Acceptance**：可由測試／人工 smoke 明確判定。
-- **Risk Level**：A／B／C。
-- **Manual acceptance**：`REQUIRED` 或 `NOT REQUIRED`。
-- **Git permission**。
-- **Expected branch**。
-- **Report**：Agent 必須回報哪些 evidence。
-- **Stop**：Stage 完成後在哪裡停止。
+- **Goal**: one verifiable outcome.
+- **Authority**: the Owner decision, rules source, or repository document that governs the batch.
+- **Base**: branch plus exact expected base SHA.
+- **In scope**.
+- **Out of scope**.
+- **Acceptance**: explicit pass/fail conditions that tests or manual acceptance can verify.
+- **Risk Level**: A / B / C.
+- **Manual acceptance**: `REQUIRED` or `NOT REQUIRED`.
+- **Git permission**.
+- **Expected branch**.
+- **Report**: evidence the Agent must return.
+- **Stop**: where execution must stop after the authorized stage.
 
-缺 Goal、scope、Acceptance 或 Stop，不開始實作。
+Do not begin implementation if Goal, scope, Acceptance, or Stop is missing.
 
 ### Batch sizing
 
-- 以使用者可理解的功能 slice／規則 slice／翻譯 slice 為單位。
-- 不因 identity count、LOC 或 file count 機械拆批或合批。
-- 不把「順手 refactor」塞進小修正。
-- 若新工作不是 Acceptance 必要、不是 blocker、也沒有立即降低具體風險，列為 deferred observation。
+- Prefer a user-understandable feature slice, rules slice, or translation slice.
+- Do not mechanically split or merge work based on identity count, LOC, or file count.
+- Do not include opportunistic refactors in a small fix.
+- If additional work is not required for Acceptance, is not a blocker, and does not immediately reduce a concrete risk, record it as a deferred observation.
 
 ---
 
 ## 4. Translation Workflow
 
-Translation 是 Owner 主要工作區；Reviewer 負責把工作轉成可審核的表格與 frozen implementation authority。
+Translation is primarily the Owner's working area. The Reviewer converts source material into a reviewable worksheet and, after Owner approval, into frozen implementation authority for the Agent.
 
 ### Google Sheet workspace
 
-需要 Owner 定稿時，優先使用 Owner 指定 Drive 中的 native Google Sheet。建議欄位：
+When Owner finalization is required, prefer a native Google Sheet in the Owner-designated Drive folder. Recommended columns include:
 
-- stable identity／ID；
-- content type／surface；
-- canonical English；
-- Reviewer 建議；
-- **Owner Final zh-TW**；
-- status；
-- source／rule reference；
-- notes。
+- stable identity / ID;
+- content type / surface;
+- canonical English;
+- Reviewer suggestion;
+- **Owner Final zh-TW**;
+- status;
+- source / rule reference;
+- notes.
 
-原則固定為：**Reviewer 建議，Owner 定稿。**
+The rule is: **Reviewer proposes; Owner finalizes.**
 
 ### Translation decision boundary
 
-- Agent 不得自行發明新的中文遊戲術語、能力名稱或 prose。
-- Reviewer 可處理不改變語意的 mechanical variant，例如標點、大小寫、單複數與已核准譯名的文法變體。
-- 真正的新術語、新譯名、新 prose 或語意取捨，交 Owner。
-- 相同 canonical English 在不同 semantic context 可以有不同定稿，不得只因英文相同就全域統一。
-- Owner 已改 Final value 時，最新 Owner value 是 authority；不得把舊 AI suggestion 靜默還原。
+- The Agent must not invent new Chinese game terms, ability names, or prose.
+- The Reviewer may resolve mechanical variants that do not change semantics, such as punctuation, capitalization, singular/plural, or grammatical variants of already-approved terminology.
+- Truly new terminology, names, prose, or semantic choices go to the Owner.
+- The same canonical English text may have different approved zh-TW translations in different semantic contexts. Do not globally unify translations merely because the English text matches.
+- If the Owner changes a Final value, the latest Owner value is the authority. Never silently restore an older AI suggestion.
 
 ### Agent handoff
 
-- Google Sheet 是 mutable Owner／Reviewer workspace，**不是 Agent implementation authority**。
-- Agent 正常只讀 GitHub Batch Issue 中的 frozen translation packet／明確定稿清單。
-- frozen packet 至少要保留 stable identity、exact canonical English、approved zh-TW 與 source context。
-- 當專案建立 deterministic packet tooling 後，再要求 per-record canonical hash／machine reconciliation；**不要為了流程完整感在專案早期先造一套不需要的 localization framework**。
-- 私人 Drive／Sheet URL 不預設貼到 public GitHub Issue／PR。
+- The Google Sheet is a mutable Owner/Reviewer workspace, **not Agent implementation authority**.
+- The Agent normally reads only the frozen translation packet or explicit approved translation list in the GitHub Batch Issue.
+- A frozen packet should preserve, at minimum, stable identity, exact canonical English, approved zh-TW, and source context.
+- Add per-record canonical hashes and machine reconciliation only after the project has deterministic packet tooling that actually benefits from them. **Do not build a large localization framework early merely for process completeness.**
+- Private Drive / Sheet URLs should not be posted to a public GitHub Issue or PR by default.
 
 ### Canonical safety
 
-翻譯不得改變：
+Translation work must not change:
 
-- canonical ID；
-- rule number／formula；
-- cross-reference identity；
-- choice legality；
-- runtime availability；
-- JSON schema semantics。
+- canonical IDs;
+- rule numbers or formulas;
+- cross-reference identities;
+- choice legality;
+- runtime content availability;
+- JSON schema semantics.
 
-若譯文實作需要更動上述任何項目，該工作不再是單純 translation batch，必須重新分類風險與 scope。
+If implementing a translation requires changing any of these, it is no longer a pure translation batch and must be re-scoped and reclassified for risk.
 
 ---
 
@@ -150,66 +150,69 @@ Translation 是 Owner 主要工作區；Reviewer 負責把工作轉成可審核�
 
 ### Level A — Low risk
 
-適用：
+Typical work:
 
-- docs；
-- 已核准的靜態文案；
-- 無 state／rules／data selection／shared behavior 影響的 display-only change。
+- documentation;
+- already-approved static copy;
+- display-only changes with no impact on state, rules, data selection, or shared behavior.
 
-最低證據：
+Minimum evidence:
 
-- actual diff／changed files；
-- 最接近變更的 targeted check（若存在）；
-- whitespace／format check；
-- 修改 source code 時的適用 lint／typecheck。
+- actual diff and changed files;
+- the closest targeted check/test, if one exists;
+- whitespace / formatting check;
+- applicable lint or typecheck when source code changes.
 
-通常不要求 full app smoke 或 Owner manual acceptance。
+Usually not required:
+
+- full-app smoke testing;
+- Owner manual acceptance.
 
 ### Level B — Behavior / Rules risk
 
-適用：
+Typical work:
 
-- UI component behavior；
-- step navigation／unlock；
-- state handling／dependent invalidation；
-- character legality validation；
-- rules calculation／derived statistics；
-- data lookup／filtering；
-- localization lookup／fallback；
-- shared UI wiring。
+- UI component behavior;
+- step navigation / unlock behavior;
+- state handling / dependent invalidation;
+- character legality validation;
+- rules calculations / derived statistics;
+- data lookup / filtering;
+- localization lookup / fallback;
+- shared UI wiring.
 
-最低證據：
+Minimum evidence:
 
-- targeted public-behavior tests；
-- lint／typecheck（依 current repo tooling）；
-- 相關 test suite；
-- scope 外沒有 side effect；
-- rules calculation 使用可追溯到 authority 的 expected values。
+- targeted public-behavior tests;
+- lint / typecheck according to current repository tooling;
+- relevant test suite;
+- evidence that no out-of-scope side effect was introduced;
+- rules-calculation expectations traceable to an independent authority.
 
-新創角 flow、重大 interaction 或 responsive behavior 無法可靠自動證明時，`Manual acceptance: REQUIRED`。
+For a new character-creation flow, major interaction, or responsive behavior that cannot be reliably proven by automated tests, set `Manual acceptance: REQUIRED`.
 
 ### Level C — Persistence / Schema / Data-integrity risk
 
-適用：
+Typical work:
 
-- localStorage／auto-save／reload；
-- JSON import／export schema；
-- save-version migration；
-- canonical data generator／sync pipeline；
-- data-loss risk；
-- security／authorization；
-- 可能批次改變大量 rule data 或 identity mapping 的工作。
+- localStorage / auto-save / reload;
+- JSON import/export schema;
+- save-version migration;
+- canonical data generator / synchronization pipeline;
+- data-loss risk;
+- security / authorization;
+- batch changes that may alter a large amount of rule data or identity mappings.
 
-最低證據：
+Minimum evidence:
 
-- Level B 證據；
-- round-trip／reload／compatibility tests；
-- data-integrity evidence；
-- error／malformed input path；
-- 重要 player-facing flow 的代表性 smoke；
-- 對可能資料損失或 migration 的工作要求 Owner manual acceptance。
+- all applicable Level B evidence;
+- round-trip / reload / compatibility tests;
+- data-integrity evidence;
+- malformed-input / error-path coverage;
+- representative smoke testing for important player-facing flows;
+- Owner manual acceptance for data-loss or migration-sensitive work.
 
-不要把所有 Draw Steel 規則工作都自動升成 Level C；依真正風險分類。
+Do not classify all Draw Steel rules work as Level C by default. Classify by actual risk.
 
 ---
 
@@ -217,82 +220,83 @@ Translation 是 Owner 主要工作區；Reviewer 負責把工作轉成可審核�
 
 ### Read current tooling first
 
-不要在 Skill 永久寫死 `npm test`、`vitest`、`build` 等 command。Agent 每批先讀 current repository：
+Do not permanently hard-code commands such as `npm test`, `vitest`, or `build` into this workflow. For each batch, read the current repository state first:
 
-- `package.json` scripts／`packageManager`；
-- lockfile；
-- CI workflow；
-- 本批附近的 tests。
+- `package.json` scripts and `packageManager`;
+- lockfile;
+- CI workflow;
+- tests near the changed area.
 
-依 repo evidence 選 package manager；global tool availability 不是理由。
+Choose the package manager from repository evidence. Global tool availability is not a reason to switch package managers.
 
 ### Public behavior over internals
 
-優先測：
+Prefer tests that prove:
 
-- 使用者可選／不可選什麼；
-- 角色最後是否合法；
-- 修改前置選擇後，受影響的後續選項是否正確失效／要求修正；
-- 顯示的 derived value 是否正確；
-- export／import 是否保存 canonical character state；
-- reload 是否恢復 auto-save state；
-- malformed JSON 是否安全失敗並提供可理解訊息。
+- what the player can and cannot select;
+- whether the final character is legal;
+- whether downstream selections are correctly invalidated after an upstream change;
+- whether displayed derived values are correct;
+- whether export/import preserves canonical character state;
+- whether reload restores auto-saved state;
+- whether malformed JSON fails safely with understandable feedback.
 
-避免只測 internal boolean 或把 critical interaction mock 掉。
+Avoid tests that only assert an internal boolean or mock away the critical interaction under review.
 
 ### Rules evidence must not be self-referential
 
-當 claim 是「規則列舉、合法選項、derived stat、identity set 正確」時，expected result 不應只由被測 production helper 自己產生。
+When the claim is that a rules enumeration, legal-option set, derived statistic, or identity set is correct, the expected result should not come only from the same production helper being tested.
 
-使用最低足夠的獨立 evidence，例如：
+Use the minimum sufficient independent evidence, such as:
 
-- rulebook fixture／explicit expected value；
-- structured source record；
-- 另一個獨立 extraction／hard-coded small representative scenario。
+- a rulebook fixture or explicit expected value;
+- a structured source record;
+- an independent extraction;
+- a small representative hard-coded scenario.
 
-不需要為每批重造完整第二套 engine。
+This does not require building a second rules engine for every batch.
 
 ### Fresh evidence
 
-- 最後一次 tracked change 後取得 required evidence。
-- final report 必須識別被驗證的 exact HEAD／tree。
-- verification 後若 tracked file 改變，受影響 evidence 對新 HEAD 失效。
-- timeout／flaky failure 必須如實回報；rerun green 不會抹除先前 failure。
-- Stage 3 required CI red 一律 STOP，不得 merge。
+- Required evidence must be obtained after the final tracked change.
+- The final report must identify the exact HEAD / tree that was verified.
+- If a tracked file changes after verification, affected evidence is stale for the new HEAD.
+- Timeout or flaky failures must be reported honestly. A green rerun does not erase an earlier failure.
+- A red required CI check during Stage 3 always means **STOP; do not merge**.
 
 ### Responsive / delegated UI
 
-若 mobile／compact path materially 不同，至少覆蓋一個代表性 branch。shared component 有 fallback 時，驗證最終 rendered behavior，不只 assert 傳入 argument。
+If mobile / compact rendering uses a materially different path, cover at least one representative branch. If a shared component owns a fallback, verify the final rendered behavior rather than only asserting the argument passed into the component.
 
 ---
 
 ## 7. Stage 1 — Agent Implementation
 
-正常 route：一個 Batch 對應一個 GitHub Issue，保存 Contract 與 Agent report。
+Normal route: one Batch corresponds to one GitHub Issue containing the Contract and Agent report.
 
-Agent：
+The Agent should:
 
-1. read-only reconcile repo／base／branch；
-2. 從 Contract 指定 exact base 建／使用 feature branch；
-3. 只修改 In Scope；
-4. 執行 risk-matched minimum sufficient verification；
-5. 建立 normal commit；
-6. 確認 working tree clean；
-7. push feature branch；
-8. 確認 remote HEAD = local HEAD；
-9. 在 Batch Issue 回報 full 40-character HEAD、actual changed files、核心 approach、fresh evidence、deviation／risk；
-10. **STOP**。
+1. perform a read-only reconciliation of repository, base, and branch;
+2. create/use the feature branch from the exact base specified by the Contract;
+3. modify only In Scope work;
+4. run risk-matched minimum sufficient verification;
+5. create a normal commit;
+6. confirm the working tree is clean;
+7. push the feature branch;
+8. confirm remote HEAD equals local HEAD;
+9. report the full 40-character HEAD, actual changed files, core approach, fresh evidence, and any deviation/risk in the Batch Issue;
+10. **STOP**.
 
-Stage 1 預設不可：
+Stage 1 does not authorize the Agent to:
 
-- 建 PR；
-- merge；
-- 直接改 integration branch；
-- force push；
-- rebase／reset／amend 已審 history；
-- 寫 upstream repository。
+- create a PR;
+- merge;
+- modify the integration branch directly;
+- force push;
+- rebase, reset, or amend reviewed history;
+- write to an upstream repository.
 
-Codex-managed worktree／workspace 可以使用；workspace 位置本身不是 review evidence。Reviewer authority 是 exact remote branch／HEAD。
+A Codex-managed worktree / workspace is allowed. Workspace location is not review evidence; the Reviewer's authority is the exact remote branch / HEAD.
 
 ---
 
@@ -300,36 +304,36 @@ Codex-managed worktree／workspace 可以使用；workspace 位置本身不是 r
 
 ### Pass 1 — Requirement / Scope
 
-確認：
+Check:
 
-- Goal／Acceptance 是否達成；
-- Owner decision／approved translation 是否遵守；
-- actual changed files／commits 是否符合 scope；
-- 是否偷帶額外 content source、level、feature 或 refactor；
-- 是否有未授權 ID／schema／save format／canonical data change。
+- whether Goal and Acceptance are met;
+- whether Owner decisions and approved translations were followed;
+- whether actual changed files and commits stay within scope;
+- whether extra content sources, levels, features, or refactors were added without authorization;
+- whether any ID, schema, save format, or canonical data changed without authorization.
 
 ### Pass 2 — Correctness / Evidence
 
-確認：
+Check:
 
-- 真實 call path／state transition；
-- rule legality／dependent invalidation；
-- persistence／round-trip（若適用）；
-- public-behavior tests；
-- final-HEAD fresh evidence；
-- Agent claim 與 actual remote diff／CI 是否一致。
+- actual call paths and state transitions;
+- rules legality and dependent invalidation;
+- persistence / round-trip behavior when relevant;
+- public-behavior tests;
+- final-HEAD fresh evidence;
+- whether Agent claims match actual remote diff / tests / CI.
 
-**Agent 自述不是獨立證據。**
+**Agent self-reporting is not independent evidence.**
 
 ### Verdict
 
-只使用：
+Use only:
 
-- **PASS**；
-- **BLOCKED** — 有會影響本批 Acceptance／correctness／data safety 的 blocker；
-- **OWNER DECISION REQUIRED** — authority 無法自行補足。
+- **PASS**;
+- **BLOCKED** — a blocker affects Acceptance, correctness, or data safety;
+- **OWNER DECISION REQUIRED** — authority is insufficient and cannot be safely inferred.
 
-Review output 優先簡短：
+Keep review output compact when possible:
 
 ```text
 Verdict:
@@ -344,174 +348,174 @@ Next action:
 
 ## 9. Blocker Gate
 
-通常屬 blocker：
+Typical blockers include:
 
-- 直接違反 Owner 最新決定或 MVP requirement；
-- 會允許非法角色，或阻擋合法角色；
-- in-scope rule data／derived value 明確錯誤；
-- 前置修改後仍留下非法 downstream state；
-- auto-save／JSON round-trip 有資料損失；
-- schema／ID／reference／canonical source 被未授權改動；
-- 新翻譯語意未經 Owner 核准；
-- required evidence 缺失或與 claim 相反；
-- scope creep 導致無法可靠審查本批。
+- direct violation of the Owner's latest decision or an MVP requirement;
+- allowing an illegal character or preventing a legal character;
+- demonstrably incorrect in-scope rule data or derived value;
+- illegal downstream state remaining after an upstream choice changes;
+- data loss in auto-save or JSON round-trip;
+- unauthorized schema / ID / reference / canonical-source changes;
+- new translation semantics that were not approved by the Owner;
+- missing required evidence or evidence that contradicts the claim;
+- scope creep large enough to make the batch unreliable to review.
 
-通常不是 blocker：
+Usually not blockers:
 
-- PR body 排版偏好；
-- 不影響 Acceptance 的命名／文件微調；
-- 未來可以更漂亮的 architecture；
-- 本批以外的 refactor idea；
-- 已有足夠 evidence 時，單純想「再多跑一套」驗證。
+- PR-body formatting preferences;
+- naming or documentation polish that does not affect Acceptance;
+- architecture that could be prettier later;
+- out-of-scope refactor ideas;
+- requests to run another redundant verifier when sufficient evidence already exists.
 
-問題來自 upstream／Codex baseline 不代表可以自動降級；看它是否影響本專案 requirement。
+A problem originating in upstream Codex or baseline code is not automatically lower priority. Judge it by whether it violates this project's requirements.
 
 ---
 
 ## 10. Stage 2 — Focused Correction
 
-第一輪 Review 有 blocker，或 Owner manual acceptance 發現真 blocker時：
+Use Stage 2 when the first review finds a blocker, or when Owner manual acceptance finds a real blocker after Reviewer PASS.
 
-- Reviewer 在同一 Batch Issue 留 focused correction instruction；
-- 只修 blocker，不夾帶 refactor／下一批；
-- Agent 建 normal new correction commit，不 amend 已審 commit；
-- 重跑受影響 fresh verification；
-- push 同一 feature branch；
-- 回報新 exact HEAD；
-- **STOP**。
+- The Reviewer posts a focused correction instruction in the same Batch Issue.
+- Fix only the blocker; do not include refactors or next-batch work.
+- The Agent creates a normal new correction commit; do not amend the reviewed commit.
+- Re-run affected fresh verification.
+- Push the same feature branch.
+- Report the new exact HEAD.
+- **STOP**.
 
-Stage 2 後 Reviewer focused verify correction 與新的重大問題。
+After Stage 2, the Reviewer performs a focused verification of the correction and any newly exposed major issue.
 
-若已完成兩輪完整 Review 後仍有結構性 blocker，停止 patch loop，重新評估方案／scope，必要時交 Owner 裁決。
+If two full review rounds still leave a structural blocker, stop the patch loop and re-evaluate the approach or scope. Escalate to the Owner if a real decision is required.
 
 ---
 
 ## 11. Manual Acceptance
 
-Batch Contract 必須預先標示 `REQUIRED` 或 `NOT REQUIRED`。
+Every Batch Contract must predeclare `REQUIRED` or `NOT REQUIRED`.
 
-Manual acceptance 只驗自動測試難以證明的真實 UX，例如：
+Manual acceptance should cover only real UX that automated tests cannot reliably prove, for example:
 
-- 第一次完整 character-creation slice；
-- direct step navigation 是否自然；
-- mobile／responsive；
-- 明顯的 copy／layout；
-- import/export 使用體驗；
-- destructive／migration flow。
+- the first complete character-creation slice;
+- whether direct step navigation feels understandable;
+- mobile / responsive behavior;
+- visible copy / layout issues;
+- import/export user experience;
+- destructive or migration flows.
 
-不要把人工驗收變成無目的全站巡覽。
+Do not turn manual acceptance into an aimless full-site tour.
 
-若 Owner manual smoke 發現 blocker，回 Stage 2；任何 tracked correction 都使舊 exact-HEAD acceptance 失效。
+If Owner manual smoke testing finds a blocker, return to Stage 2. Any tracked correction invalidates prior exact-HEAD manual acceptance.
 
 ---
 
 ## 12. Stage 3 — Authorized Git / PR Closeout
 
-Reviewer PASS 本身**不是** Agent 的 merge permission。
+Reviewer PASS by itself is **not** permission for the Agent to merge.
 
 ### Repository target
 
-固定 GitHub write target：
+The fixed GitHub write target is:
 
 `boyiad2110/ds-hero-builder`
 
-若使用 `gh`，write command 明確指定 repository，不依賴 origin／upstream 猜測。
+If `gh` is used, write commands should specify the repository explicitly rather than relying on origin/upstream inference.
 
 ### Integration branch
 
-- 以 current repository policy／Batch Contract 為準。
-- 在 Owner 尚未建立 `develop` 等 integration policy 前，**預設 target 是 `main`**。
-- Stage 1 不直接在 integration branch 實作。
+- Follow current repository policy / the Batch Contract.
+- Until the Owner establishes a `develop` or other integration policy, **the default integration target is `main`**.
+- Stage 1 must not implement directly on the integration branch.
 
 ### Authorization
 
-Reviewer 在 actual remote evidence 上固定：
+Based on actual remote evidence, the Reviewer must fix:
 
-- approved full HEAD；
-- approved base；
-- merge method；
-- expected PR head／target；
-- required CI；
-- manual acceptance gate；
-- cleanup／Report／Stop。
+- approved full HEAD;
+- approved base;
+- merge method;
+- expected PR head / target;
+- required CI;
+- manual acceptance gate;
+- cleanup / Report / Stop.
 
-若 `Manual acceptance: NOT REQUIRED`，可授權 normal Stage 3。
+If `Manual acceptance: NOT REQUIRED`, the Reviewer may authorize normal Stage 3.
 
-若 `Manual acceptance: REQUIRED`：
+If `Manual acceptance: REQUIRED`:
 
-- **Stage 3A**：只 create／reconcile PR + exact-HEAD CI，然後 STOP；
-- Owner 在 unchanged PR HEAD 完成 smoke；
-- Reviewer 記錄 PASS；
-- **Stage 3B**：才授權 merge + cleanup。
+- **Stage 3A**: create/reconcile the PR and obtain exact-HEAD CI only, then STOP;
+- the Owner performs smoke testing on the unchanged PR HEAD;
+- the Reviewer records PASS;
+- **Stage 3B**: only then may the Agent merge and clean up.
 
-Agent 不得在 Stage 3 偷改 code。CI red／HEAD 變動／base 變動／unexpected files 時 STOP，回 Reviewer。
+The Agent must not modify code during Stage 3. If CI is red, HEAD changes, base changes, or unexpected files appear, STOP and return to the Reviewer.
 
 ### Post-merge reviewer reconciliation
 
-Agent merge report 後，Reviewer獨立確認至少：
+After the Agent reports a merge, the Reviewer independently verifies at least:
 
-- PR actual state = merged；
-- merge result／method 正確；
-- required CI 在 approved HEAD 成功；
-- integration branch 指向預期結果；
-- 沒有未授權 upstream write；
-- feature branch cleanup 已完成，或只剩明確 non-blocking housekeeping。
+- PR actual state is merged;
+- merge result / method is correct;
+- required CI passed on the approved HEAD;
+- the integration branch points to the expected result;
+- no unauthorized upstream write occurred;
+- feature-branch cleanup is complete, or only clearly non-blocking housekeeping remains.
 
-確認後才宣告 Batch Closed。Agent 的「已 merge」文字本身不夠。
+Only then may the Reviewer declare the Batch Closed. The Agent's statement “merged” is not sufficient on its own.
 
 ---
 
 ## 13. Git Safety
 
-- 不寫 `VerisimLLC/*` upstream。
-- 不在 remote state 不明時直接 push／merge；先 read-only reconcile。
-- 不使用 force push、reset、rebase、amend 去「修好」已審 history。
-- correction 使用 normal new commit。
-- PR／base／head／SHA 不符時 STOP，不建立第二個 PR 來繞過問題。
-- package installer／skill tooling 不應污染 repo；出現未知 generated repo files 時先 STOP，不用 `.gitignore` 掩蓋。
-- 不因 Codex 使用 isolated worktree 就要求把 Owner local clone 當成 close gate；remote exact state 才是 integration authority。
+- Never write to `VerisimLLC/*` upstream repositories.
+- If remote state is unclear, perform read-only reconciliation before any push or merge.
+- Do not use force push, reset, rebase, or amend to “fix” reviewed history.
+- Corrections use normal new commits.
+- If PR / base / head / SHA does not match the approved state, STOP. Do not create a second PR to work around the mismatch.
+- Package installers and skill tooling must not pollute the repository. If unknown generated repository files appear, STOP rather than hiding them with `.gitignore`.
+- Do not treat the Owner's local clone as a closeout gate merely because Codex uses an isolated worktree. The remote exact state is the integration authority.
 
 ---
 
 ## 14. Project-specific Failure Modes
 
-Reviewer 特別防止：
+The Reviewer should explicitly guard against:
 
-1. **把 Codex data 當規則書的上位 authority**。
-2. **因 draw-steel-data 有某內容就偷偷納入 MVP**。
-3. **只完成 UI，沒有 character-legality／derived-rule tests**。
-4. **修改 ancestry／class 後，下游選項仍殘留成非法角色**。
-5. **只測 export，不測 JSON import round-trip**。
-6. **auto-save 只有寫入，沒有 reload／corruption path evidence**。
-7. **Agent 自己發明中文譯名或把相同英文跨 context 強制統一**。
-8. **為了「架構漂亮」在小 batch 順便重構 rule/data layer**。
-9. **verification 跑在 final tracked change 之前**。
-10. **Stage 3 收尾後順手開始下一批**。
+1. **Treating Codex data as higher authority than the official rulebooks.**
+2. **Silently adding content to the MVP because it exists in `draw-steel-data`.**
+3. **Finishing UI without character-legality / derived-rule tests.**
+4. **Leaving illegal downstream choices after ancestry / class changes.**
+5. **Testing JSON export without testing JSON import round-trip.**
+6. **Implementing auto-save writes without reload / corruption-path evidence.**
+7. **Allowing the Agent to invent Chinese translations or globally unify matching English text across contexts.**
+8. **Including rules/data-layer refactors in a small batch merely for architectural neatness.**
+9. **Running verification before the final tracked change.**
+10. **Starting the next batch during Stage 3 closeout.**
 
 ---
 
 ## 15. Efficiency
 
-- 不重問 Owner 已明確回答的問題。
-- Issue／handoff 寫本批 delta，不重貼完整專案歷史。
-- Reviewer 能處理的 mechanical work 不上拋 Owner。
-- Agent 不在正常 Stage 1 中間反覆問「要不要繼續」；除非出現真正 blocker／authority mismatch／verification failure／repo anomaly。
-- 外部等待不是擴 scope 的空檔。
-- Acceptance 達成後立即收斂；沒有 blocker 就 closeout + STOP。
-- 不為尚未存在的未來需求預先建立 migration、generic rules engine、sync platform 或大型 localization framework。
+- Do not ask the Owner to repeat already-settled decisions.
+- Keep Issue / handoff content focused on the current batch delta; do not repeat the full project history.
+- Mechanical work the Reviewer can safely resolve should not be pushed back to the Owner.
+- The Agent should not repeatedly ask “continue?” during normal Stage 1 progress. Stop only for a real blocker, authority mismatch, verification failure, or repository anomaly.
+- External waiting time is not an opportunity to expand scope.
+- Once Acceptance is achieved and no blocker remains, converge immediately on closeout + STOP.
+- Do not pre-build migration systems, generic rules engines, synchronization platforms, or large localization frameworks for needs that do not yet exist.
 
 ---
 
 ## Self-Check
 
-- [ ] 已讀 Owner 最新決定與 current repo state。
-- [ ] 已確認本批 rule authority；Codex data／Lua 沒有凌駕官方規則書。
-- [ ] 已固定唯一 Batch、scope、Acceptance、Risk、manual gate、Stop。
-- [ ] Translation 若需要 Owner，只有真正 semantic decisions 被送核。
-- [ ] Agent task 不要求讀私人 Sheet；implementation authority 已 freeze。
-- [ ] Review 使用 exact remote diff／HEAD／tests／CI，而不是只信 Agent report。
-- [ ] Rules／state／persistence 的 tests 對應 public behavior。
-- [ ] Final evidence 在最後 tracked change 後取得。
-- [ ] Stage 3 只有 Reviewer 對 exact approved state 明確授權後才執行。
-- [ ] 沒有把 Non-blocking Observation 升成 blocker。
-- [ ] Batch Closed 後 STOP；下一批重新固定 Contract。
+- [ ] Read the Owner's latest decisions and current repository state.
+- [ ] Confirmed the rules authority for this batch; Codex data / Lua does not override the official rulebooks.
+- [ ] Fixed one Batch with scope, Acceptance, Risk, manual gate, and Stop.
+- [ ] If translation requires Owner input, only real semantic decisions were escalated.
+- [ ] The Agent task does not require access to a private Sheet; implementation authority is frozen.
+- [ ] Review uses exact remote diff / HEAD / tests / CI rather than trusting Agent reporting alone.
+- [ ] Rules / state / persistence tests correspond to public behavior.
+- [ ] Final evidence was obtained after the last tracked change.
+- [ ] Stage 3 begins only after explicit Reviewer authorization bound to the exact approved state.
+- [ ] Non-blocking observations were not promoted into blockers.
+- [ ] After Batch Closed, STOP. The next batch requires a new Contract.
