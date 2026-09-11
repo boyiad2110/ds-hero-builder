@@ -10,6 +10,17 @@ This file applies to the entire repository unless a deeper `AGENTS.md` or `AGENT
 
 `docs/reviewer/PROJECT-REVIEW-SKILL.md` is **Reviewer-facing workflow documentation**, not a standing Agent workflow. Do not assume the Reviewer role from that file. Your implementation authority comes from the current task / Batch Contract plus this `AGENTS.md` and repository requirements.
 
+## Repository Authority Pointers
+
+Read the relevant authority before implementing a batch:
+
+- `docs/PRODUCT-REQUIREMENTS.md` — current MVP product requirements.
+- `docs/architecture/ARCHITECTURE.md` — approved technical architecture and deployment direction.
+- `docs/translation/TRANSLATION-WORKFLOW.md` — translation decision and handoff rules.
+- Current Batch Issue / Contract — exact scope, acceptance, risk, Git permission, and STOP boundary for the task.
+
+The Owner's latest explicit decision overrides older repository summaries when they conflict.
+
 ## Product Scope — Current MVP
 
 Unless the Owner explicitly changes these decisions:
@@ -32,6 +43,8 @@ Unless the Owner explicitly changes these decisions:
 - JSON must be importable back into the app and restore an editable character.
 - MVP does **not** include PDF export.
 - MVP does **not** include Codex import.
+- The preferred free hosting target is **Cloudflare Pages**; **GitHub Pages** is an acceptable fallback.
+- Do **not** make the project depend on ChatGPT Sites or another ChatGPT-hosted website feature.
 
 Do not add higher-level content, unrelated supplements, or extra features merely because upstream data contains them.
 
