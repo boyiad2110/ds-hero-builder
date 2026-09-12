@@ -50,6 +50,14 @@ Do not add higher-level content, unrelated supplements, or extra features merely
 
 ## Rules and Data Authority
 
+The project shorthand is:
+
+- **Rules canon:** Draw Steel Heroes **1.01b** + Summoner **v1.0b** + Beastheart **v1.0**.
+- **Structured-data reference:** `VerisimLLC/draw-steel-data` for stable identities, relationships, and source-shaped data.
+- **Implementation / character-builder reference:** `VerisimLLC/draw-steel-codex` for proven code patterns and builder behavior.
+
+Codex is a preferred implementation reference, **not** a rules authority over the three official books.
+
 When deciding what the game actually allows, use this priority:
 
 1. Latest explicit Owner decision for the task.
@@ -110,6 +118,8 @@ Verification should match the change risk:
 - If mobile/compact rendering materially differs from desktop, cover the relevant branch or report why manual acceptance is required.
 - Required verification must be run after the final tracked change that it is meant to validate.
 - Report failures honestly. A later green rerun does not erase an earlier failure.
+
+Do **not** mechanically duplicate the full CI suite locally for every batch. Local verification should be the smallest fresh, risk-matched set that gives useful pre-push confidence; required PR CI is the repository-wide gate. Run the full local test/typecheck/build set only when the actual change risk or affected surface justifies it, CI is unavailable, or the Batch Contract explicitly requires local full-suite evidence.
 
 Do not change timeouts, test configuration, or unrelated production code merely to make a failing check green.
 

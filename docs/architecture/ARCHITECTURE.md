@@ -70,11 +70,17 @@ Add a backend only if a future Owner decision introduces a requirement that cann
 
 ## Data Architecture
 
-Do **not** make UI components consume upstream Codex YAML directly.
+Do **not** make UI components consume upstream Codex/data YAML directly.
+
+Source roles are distinct:
+
+- **Rules canon:** Draw Steel Heroes **1.01b**, Summoner **v1.0b**, and Beastheart **v1.0** define in-scope game rules and mechanics.
+- **Structured-data reference:** `VerisimLLC/draw-steel-data` is preferred for stable IDs, relationships, and source-shaped records, subject to the official rules canon.
+- **Implementation / builder reference:** `VerisimLLC/draw-steel-codex` is preferred for proven code patterns and character-builder behavior, but it is not rules canon.
 
 Preferred flow:
 
-`Official / Codex source data -> normalization / validation -> project-owned typed data -> rules/domain layer -> UI`
+`rules canon + structured-data reference + implementation reference -> normalization / validation -> project-owned typed data -> rules/domain layer -> UI`
 
 ### Why normalize upstream data
 

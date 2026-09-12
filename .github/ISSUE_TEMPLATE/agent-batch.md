@@ -59,7 +59,9 @@ Any deviation from this workflow must be stated explicitly in the Batch Contract
 
 ## Verification
 
-List only the risk-matched evidence required for this batch. Use current repository tooling and CI rather than inventing generic commands.
+List only the **risk-matched local evidence** required for this batch. Use current repository tooling and required PR CI rather than inventing generic commands.
+
+Do **not** copy the full CI command list into every Batch by default. Local verification is for targeted pre-push confidence; required PR CI is the repository-wide gate. Require a full local test/typecheck/build run only when the actual risk or affected surface justifies it, CI is unavailable, or the Batch specifically needs local full-suite evidence.
 
 - 
 

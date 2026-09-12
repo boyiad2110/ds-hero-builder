@@ -22,6 +22,8 @@ The MVP supports level 1 character creation using only:
 - Summoner **v1.0b**
 - Beastheart **v1.0**
 
+These three books are the project's **rules canon** for the MVP. Draw Steel Codex is a preferred implementation / character-builder reference, not an additional rules canon and not an authority over these books.
+
 Content present in upstream repositories does not automatically become in scope.
 
 ### Language
