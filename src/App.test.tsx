@@ -34,6 +34,44 @@ function expectBudgetValue(label: string, value: number) {
   expect(within(budgetItem!).getByText(String(value))).toBeInTheDocument()
 }
 
+describe('Character creation app shell', () => {
+  it('shows the full step set with Ancestry current and future steps unavailable', () => {
+    render(<App />)
+
+    const navigation = screen.getByRole('navigation', { name: '創角步驟' })
+    const stepButtons = within(navigation).getAllByRole('button')
+    const ancestryStep = within(navigation).getByRole('button', { name: /族裔.*Ancestry/i })
+
+    expect(stepButtons).toHaveLength(8)
+    expect(ancestryStep).toBeEnabled()
+    expect(ancestryStep).toHaveAttribute('aria-current', 'step')
+    expect(ancestryStep).toHaveTextContent('未完成')
+
+    for (const futureStep of [
+      'Character',
+      'Culture',
+      'Career',
+      'Class',
+      'Kit',
+      'Complication',
+      'Title',
+    ]) {
+      const button = within(navigation).getByRole('button', {
+        name: new RegExp(`${futureStep}.*尚未開放`, 'i'),
+      })
+      expect(button).toBeDisabled()
+      fireEvent.click(button)
+    }
+
+    expect(
+      within(screen.getByRole('main')).getByRole('heading', {
+        level: 2,
+        name: /族裔.*Ancestry/i,
+      }),
+    ).toBeInTheDocument()
+  })
+})
+
 describe('Ancestry creation UI', () => {
   it('presents and selects all 12 ancestries with Frozen zh-TW names', () => {
     render(<App />)
@@ -45,7 +83,7 @@ describe('Ancestry creation UI', () => {
     for (const canonicalName of Object.values(ANCESTRY)) {
       selectAncestry(canonicalName)
       expect(
-        screen.getByRole('heading', { level: 2, name: new RegExp(canonicalName, 'i') }),
+        screen.getByRole('heading', { level: 3, name: new RegExp(canonicalName, 'i') }),
       ).toBeInTheDocument()
       expect(
         screen.getByRole('button', { name: new RegExp(canonicalName, 'i') }),
@@ -63,6 +101,12 @@ describe('Ancestry creation UI', () => {
 
     expect(screen.getByRole('status')).toHaveTextContent('已完成')
     expect(screen.getByRole('status')).toHaveTextContent('族裔選擇已完成')
+    expect(
+      within(screen.getByRole('navigation', { name: '創角步驟' })).getByRole('button', {
+        name: /族裔.*Ancestry/i,
+      }),
+    ).toHaveTextContent('已完成')
+    expect(screen.getByText('已完成 1 / 8 個步驟')).toBeInTheDocument()
     expectBudgetValue('點數預算', 3)
     expectBudgetValue('已使用', 3)
     expectBudgetValue('剩餘', 0)

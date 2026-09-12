@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   ANCESTRY_CREATION_MODELS,
   getAncestryCreationModel,
@@ -18,6 +18,7 @@ import {
   type AncestryTraitSelection,
   type ChoiceSelections,
 } from './domain/ancestryCreation'
+import type { CharacterCreationStepStatus } from './CharacterCreationShell'
 
 const FORMER_ANCESTRY_CHOICE_ID = 'revenant.former-life.ancestry'
 
@@ -265,7 +266,14 @@ function TraitCard({ ancestry, trait, children }: TraitCardProps) {
   )
 }
 
-export function AncestryBuilder() {
+type AncestryBuilderProps = Readonly<{
+  onStatusChange?: (report: {
+    status: CharacterCreationStepStatus
+    message: string
+  }) => void
+}>
+
+export function AncestryBuilder({ onStatusChange }: AncestryBuilderProps) {
   const [selection, setSelection] = useState<AncestrySelectionState | null>(null)
   const model = selection ? getAncestryCreationModel(selection.ancestryId) : undefined
   const result = useMemo(
@@ -394,8 +402,6 @@ export function AncestryBuilder() {
       : result.isLegal
         ? 'incomplete'
         : 'invalid'
-  const statusLabel =
-    statusKind === 'complete' ? '已完成' : statusKind === 'invalid' ? '需要修正' : '未完成'
   const statusMessage = !result
     ? '請先選擇族裔。'
     : result.isComplete
@@ -406,67 +412,56 @@ export function AncestryBuilder() {
           ? '仍有必填選項尚未完成。'
           : `還有 ${Math.max(0, remainingPoints)} 點可用。`
 
+  useEffect(() => {
+    onStatusChange?.({ status: statusKind, message: statusMessage })
+  }, [onStatusChange, statusKind, statusMessage])
+
   return (
-    <>
-      <a className="skip-link" href="#ancestry-builder">
-        跳至族裔建立內容
-      </a>
-      <header className="site-header">
-        <div>
-          <p className="eyebrow">Draw Steel 1 級創角工具</p>
-          <h1 translate="no">DS Hero Builder</h1>
+    <div className="ancestry-builder">
+      <aside className="ancestry-picker" aria-labelledby="ancestry-picker-title">
+        <div className="section-heading">
+          <p className="step-number">族裔選項</p>
+          <h3 id="ancestry-picker-title">選擇族裔</h3>
+          <p lang="en" translate="no">
+            Choose Ancestry
+          </p>
         </div>
-        <div className={`step-status ${statusKind}`} role="status" aria-live="polite">
-          <span>{statusLabel}</span>
-          <small>{statusMessage}</small>
+        <div className="ancestry-list">
+          {ANCESTRY_CREATION_MODELS.map((ancestryModel) => {
+            const localizedAncestry = getLocalizationAncestry(ancestryModel)
+            const localizedName = localize(
+              localizedAncestry,
+              ancestryModel.identity.id,
+              'Name',
+              ancestryModel.identity.canonicalName,
+            )
+            const isSelected = selection?.ancestryId === ancestryModel.identity.id
+
+            return (
+              <button
+                className="ancestry-button"
+                type="button"
+                key={ancestryModel.identity.id}
+                aria-pressed={isSelected}
+                onClick={() => selectAncestry(ancestryModel.identity.id)}
+              >
+                <span>{localizedName}</span>
+                <small lang="en" translate="no">
+                  {ancestryModel.identity.canonicalName}
+                </small>
+              </button>
+            )
+          })}
         </div>
-      </header>
+      </aside>
 
-      <main className="builder-layout" id="ancestry-builder" tabIndex={-1}>
-        <aside className="ancestry-picker" aria-labelledby="ancestry-picker-title">
-          <div className="section-heading">
-            <p className="step-number">步驟 1</p>
-            <h2 id="ancestry-picker-title">選擇族裔</h2>
-            <p lang="en" translate="no">
-              Choose Ancestry
-            </p>
-          </div>
-          <div className="ancestry-list">
-            {ANCESTRY_CREATION_MODELS.map((ancestryModel) => {
-              const localizedAncestry = getLocalizationAncestry(ancestryModel)
-              const localizedName = localize(
-                localizedAncestry,
-                ancestryModel.identity.id,
-                'Name',
-                ancestryModel.identity.canonicalName,
-              )
-              const isSelected = selection?.ancestryId === ancestryModel.identity.id
-
-              return (
-                <button
-                  className="ancestry-button"
-                  type="button"
-                  key={ancestryModel.identity.id}
-                  aria-pressed={isSelected}
-                  onClick={() => selectAncestry(ancestryModel.identity.id)}
-                >
-                  <span>{localizedName}</span>
-                  <small lang="en" translate="no">
-                    {ancestryModel.identity.canonicalName}
-                  </small>
-                </button>
-              )
-            })}
-          </div>
-        </aside>
-
-        <section className="ancestry-workspace" aria-labelledby="ancestry-title">
+      <section className="ancestry-workspace" aria-labelledby="ancestry-title">
           {!model || !selection || !ancestryLocalization || !result ? (
             <div className="empty-state">
               <p className="empty-mark" aria-hidden="true">
                 12
               </p>
-              <h2 id="ancestry-title">從 12 個族裔中選擇 1 個</h2>
+              <h3 id="ancestry-title">從 12 個族裔中選擇 1 個</h3>
               <p>選擇後即可查看族裔說明、固定特性與可購買特性。</p>
             </div>
           ) : (
@@ -474,7 +469,7 @@ export function AncestryBuilder() {
               <div className="ancestry-intro">
                 <div>
                   <p className="step-number">目前族裔</p>
-                  <h2 id="ancestry-title">
+                  <h3 id="ancestry-title">
                     {localize(
                       ancestryLocalization,
                       model.identity.id,
@@ -484,7 +479,7 @@ export function AncestryBuilder() {
                     <small lang="en" translate="no">
                       {model.identity.canonicalName}
                     </small>
-                  </h2>
+                  </h3>
                   <p className="ancestry-description">
                     {localize(
                       ancestryLocalization,
@@ -653,8 +648,7 @@ export function AncestryBuilder() {
               </section>
             </>
           )}
-        </section>
-      </main>
-    </>
+      </section>
+    </div>
   )
 }

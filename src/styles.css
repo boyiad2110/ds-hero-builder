@@ -82,12 +82,14 @@ a:focus-visible {
 }
 
 .site-header h1,
-.section-heading h2,
-.ancestry-intro h2,
+.step-navigation h2,
+.current-step-header h2,
+.section-heading h3,
+.ancestry-intro h3,
 .content-heading h3,
 .trait-card h4,
 .repeatable-heading h5,
-.empty-state h2 {
+.empty-state h3 {
   margin: 0;
   font-family: Georgia, "Noto Serif TC", "Times New Roman", serif;
   text-wrap: balance;
@@ -96,6 +98,22 @@ a:focus-visible {
 .site-header h1 {
   font-size: clamp(1.7rem, 4vw, 2.4rem);
   line-height: 1;
+}
+
+.creation-progress {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0;
+  text-align: right;
+}
+
+.creation-progress span {
+  color: #ffd28f;
+  font-weight: 800;
+}
+
+.creation-progress small {
+  color: #c9b9a4;
 }
 
 .eyebrow,
@@ -136,11 +154,147 @@ a:focus-visible {
   color: #ff9d8f;
 }
 
-.builder-layout {
+.creation-shell {
+  display: grid;
+  grid-template-columns: minmax(13rem, 16rem) minmax(0, 1fr);
+  min-height: calc(100vh - 6rem);
+}
+
+.step-navigation {
+  padding: 1.5rem 1rem;
+  border-right: 1px solid rgb(232 179 111 / 20%);
+  background: rgb(26 19 17 / 92%);
+}
+
+.step-navigation-heading {
+  padding: 0 0.5rem;
+}
+
+.step-navigation h2 {
+  font-size: 1.35rem;
+}
+
+.step-list {
+  display: grid;
+  gap: 0.45rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step-button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.15rem 0.7rem;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.65rem 0.7rem;
+  color: #d9c9b5;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 0.65rem;
+  background: transparent;
+}
+
+.step-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.step-button:not(:disabled):hover {
+  border-color: rgb(232 179 111 / 42%);
+  background: rgb(232 179 111 / 9%);
+}
+
+.step-button.current {
+  color: #fff2df;
+  border-color: rgb(232 179 111 / 55%);
+  background: rgb(232 179 111 / 13%);
+  box-shadow: inset 3px 0 #e8b36f;
+}
+
+.step-button:disabled {
+  color: #897d70;
+  cursor: not-allowed;
+}
+
+.step-index {
+  grid-row: 1 / 3;
+  color: #e8b36f;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.step-button:disabled .step-index {
+  color: #776b60;
+}
+
+.step-name {
+  display: grid;
+  gap: 0.05rem;
+  min-width: 0;
+  font-weight: 800;
+}
+
+.step-name [lang="en"] {
+  overflow-wrap: anywhere;
+}
+
+.step-name > span + span {
+  color: #b9aa97;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.step-state {
+  color: #c3b29e;
+  font-size: 0.68rem;
+}
+
+.step-state.complete {
+  color: #94d5a1;
+}
+
+.step-state.invalid {
+  color: #ff9d8f;
+}
+
+.step-state.unavailable {
+  color: #897d70;
+}
+
+.current-step {
+  min-width: 0;
+  scroll-margin-top: 1rem;
+}
+
+.current-step-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid rgb(232 179 111 / 20%);
+  background: rgb(31 23 20 / 64%);
+}
+
+.current-step-header h2 {
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
+  font-size: clamp(1.55rem, 3vw, 2.1rem);
+}
+
+.current-step-header h2 small {
+  color: #af9f8b;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.ancestry-builder {
   display: grid;
   grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
-  min-height: calc(100vh - 6rem);
-  scroll-margin-top: 1rem;
 }
 
 .ancestry-picker {
@@ -153,13 +307,13 @@ a:focus-visible {
   margin-bottom: 1.25rem;
 }
 
-.section-heading h2 {
+.section-heading h3 {
   font-size: 1.55rem;
 }
 
 .section-heading > p:last-child,
 .english-name,
-.ancestry-intro h2 small,
+.ancestry-intro h3 small,
 .option-name small {
   display: block;
   margin: 0.2rem 0 0;
@@ -243,12 +397,12 @@ a:focus-visible {
   border-bottom: 1px solid rgb(232 179 111 / 24%);
 }
 
-.ancestry-intro h2 {
+.ancestry-intro h3 {
   font-size: clamp(2.1rem, 6vw, 4.25rem);
   line-height: 1;
 }
 
-.ancestry-intro h2 small {
+.ancestry-intro h3 small {
   margin-top: 0.65rem;
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
@@ -515,14 +669,34 @@ a:focus-visible {
   border-radius: 0.6rem;
 }
 
+@media (max-width: 980px) {
+  .creation-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .step-navigation {
+    border-right: 0;
+    border-bottom: 1px solid rgb(232 179 111 / 20%);
+  }
+
+  .step-list {
+    grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  }
+}
+
 @media (max-width: 760px) {
   .site-header,
+  .current-step-header,
   .content-heading {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .builder-layout {
+  .creation-progress {
+    text-align: left;
+  }
+
+  .ancestry-builder {
     grid-template-columns: 1fr;
   }
 
@@ -551,6 +725,8 @@ a:focus-visible {
 
 @media (max-width: 420px) {
   .site-header,
+  .current-step-header,
+  .step-navigation,
   .ancestry-workspace,
   .ancestry-picker {
     padding-right: 0.85rem;
