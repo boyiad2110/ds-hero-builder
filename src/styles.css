@@ -1,63 +1,566 @@
 :root {
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  color: #f7ead2;
-  background: #17120f;
+    Inter, "Noto Sans TC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #f6ead8;
+  background: #15100e;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  color-scheme: dark;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-}
-
-.app-shell {
-  display: grid;
-  min-height: 100vh;
-  place-items: center;
-  padding: 2rem;
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
   background:
-    radial-gradient(circle at top, rgb(126 51 36 / 32%), transparent 48%),
-    #17120f;
+    radial-gradient(circle at 12% 0%, rgb(127 52 39 / 24%), transparent 30rem),
+    #15100e;
 }
 
-.app-card {
-  width: min(100%, 42rem);
-  padding: clamp(2rem, 7vw, 4.5rem);
-  text-align: center;
-  border: 1px solid rgb(232 179 111 / 35%);
-  border-radius: 1rem;
-  background: rgb(34 25 21 / 92%);
-  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%);
+button,
+input,
+select {
+  font: inherit;
 }
 
-h1 {
+button,
+label,
+select,
+input {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(232 179 111 / 20%);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid #ffd28f;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 10;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #15100e;
+  background: #ffd28f;
+  border-radius: 0.5rem;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+.skip-link:hover {
+  background: #ffe1b2;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: max(1.25rem, env(safe-area-inset-top)) clamp(1rem, 4vw, 3.5rem) 1.25rem;
+  border-bottom: 1px solid rgb(232 179 111 / 24%);
+  background: rgb(21 16 14 / 92%);
+}
+
+.site-header h1,
+.section-heading h2,
+.ancestry-intro h2,
+.content-heading h3,
+.trait-card h4,
+.repeatable-heading h5,
+.empty-state h2 {
   margin: 0;
+  font-family: Georgia, "Noto Serif TC", "Times New Roman", serif;
+  text-wrap: balance;
+}
+
+.site-header h1 {
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  line-height: 1;
+}
+
+.eyebrow,
+.step-number {
+  margin: 0 0 0.35rem;
+  color: #e8b36f;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.step-status {
+  display: grid;
+  gap: 0.2rem;
+  max-width: 24rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid currentColor;
+  border-radius: 0.7rem;
+}
+
+.step-status span {
+  font-weight: 800;
+}
+
+.step-status small {
+  color: #e4d5c1;
+}
+
+.step-status.incomplete {
+  color: #f2c678;
+}
+
+.step-status.complete {
+  color: #94d5a1;
+}
+
+.step-status.invalid {
+  color: #ff9d8f;
+}
+
+.builder-layout {
+  display: grid;
+  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  min-height: calc(100vh - 6rem);
+  scroll-margin-top: 1rem;
+}
+
+.ancestry-picker {
+  padding: 1.75rem clamp(1rem, 2.5vw, 2rem);
+  border-right: 1px solid rgb(232 179 111 / 20%);
+  background: rgb(31 23 20 / 78%);
+}
+
+.section-heading {
+  margin-bottom: 1.25rem;
+}
+
+.section-heading h2 {
+  font-size: 1.55rem;
+}
+
+.section-heading > p:last-child,
+.english-name,
+.ancestry-intro h2 small,
+.option-name small {
+  display: block;
+  margin: 0.2rem 0 0;
+  color: #af9f8b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.ancestry-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.ancestry-button {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.65rem 0.8rem;
+  color: #f6ead8;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 0.55rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ancestry-button:hover {
+  border-color: rgb(232 179 111 / 42%);
+  background: rgb(232 179 111 / 9%);
+}
+
+.ancestry-button[aria-pressed="true"] {
+  color: #1c130f;
+  border-color: #f0bf7c;
+  background: #e8b36f;
+}
+
+.ancestry-button small {
+  color: currentColor;
+  opacity: 0.72;
+}
+
+.ancestry-workspace {
+  min-width: 0;
+  padding: clamp(1.25rem, 4vw, 3.5rem);
+}
+
+.empty-state {
+  display: grid;
+  max-width: 38rem;
+  min-height: 60vh;
+  align-content: center;
+  justify-items: start;
+}
+
+.empty-state p:last-child,
+.ancestry-description,
+.content-heading > p {
+  color: #c9b9a4;
+  line-height: 1.7;
+}
+
+.empty-mark {
+  margin: 0 0 1rem;
+  color: #e8b36f;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(2.4rem, 9vw, 5rem);
-  line-height: 0.95;
+  font-size: 4rem;
+  line-height: 1;
 }
 
-.subtitle {
+.ancestry-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  align-items: start;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgb(232 179 111 / 24%);
+}
+
+.ancestry-intro h2 {
+  font-size: clamp(2.1rem, 6vw, 4.25rem);
+  line-height: 1;
+}
+
+.ancestry-intro h2 small {
+  margin-top: 0.65rem;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+.ancestry-description {
+  max-width: 52rem;
   margin: 1.25rem 0 0;
-  color: #d9c7aa;
-  font-size: clamp(1rem, 3vw, 1.25rem);
+  text-wrap: pretty;
 }
 
-.status {
-  display: inline-block;
-  margin: 2rem 0 0;
-  padding: 0.55rem 0.9rem;
-  color: #17120f;
+.budget-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(4.5rem, 1fr));
+  margin: 0;
+  border: 1px solid rgb(232 179 111 / 32%);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  background: #211815;
+}
+
+.budget-card div {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  padding: 0.8rem;
+}
+
+.budget-card div + div {
+  border-left: 1px solid rgb(232 179 111 / 24%);
+}
+
+.budget-card dt {
+  color: #baa995;
+  font-size: 0.7rem;
+}
+
+.budget-card dd {
+  margin: 0;
+  color: #ffd28f;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.trait-section {
+  padding-top: 2.25rem;
+  scroll-margin-top: 1rem;
+}
+
+.content-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.content-heading h3 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.content-heading > p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.trait-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+}
+
+.trait-card {
+  min-width: 0;
+  padding: 1.1rem;
+  border: 1px solid rgb(232 179 111 / 24%);
+  border-radius: 0.8rem;
+  background: rgb(35 26 22 / 88%);
+}
+
+.trait-heading,
+.repeatable-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.trait-heading > div {
+  min-width: 0;
+}
+
+.trait-card h4 {
+  font-size: 1.25rem;
+}
+
+.repeatable-heading h5 {
+  font-size: 1rem;
+}
+
+.cost-badge {
+  flex: 0 0 auto;
+  padding: 0.25rem 0.5rem;
+  color: #251812;
   background: #e8b36f;
   border-radius: 999px;
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.rules-text {
+  margin: 0.85rem 0;
+  color: #dfd0bc;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.rules-text.compact {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+}
+
+.choice-group {
+  min-width: 0;
+  margin: 1rem 0 0;
+  padding: 0.9rem;
+  border: 1px solid rgb(232 179 111 / 28%);
+  border-radius: 0.65rem;
+}
+
+.choice-group legend,
+.inherited-choice > label {
+  color: #ffd28f;
+  font-weight: 800;
+}
+
+.choice-hint,
+.field-message {
+  margin: 0.2rem 0 0.7rem;
+  color: #b9aa97;
+  font-size: 0.78rem;
+}
+
+.option-grid {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.option-control,
+.purchase-control {
+  display: flex;
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.7rem;
+  border: 1px solid rgb(232 179 111 / 18%);
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.option-control:hover,
+.purchase-control:hover {
+  border-color: rgb(232 179 111 / 55%);
+  background: rgb(232 179 111 / 7%);
+}
+
+.option-control:has(input:checked),
+.purchase-control:has(input:checked) {
+  border-color: #e8b36f;
+  background: rgb(232 179 111 / 12%);
+}
+
+.option-control:has(input:disabled),
+.purchase-control:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.option-control input,
+.purchase-control input {
+  flex: 0 0 auto;
+  width: 1.15rem;
+  height: 1.15rem;
+  margin: 0.1rem 0 0;
+  accent-color: #e8b36f;
+}
+
+.option-copy,
+.option-name {
+  display: block;
+  min-width: 0;
+}
+
+.inherited-choice {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.inherited-choice select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.55rem 0.7rem;
+  color: #f6ead8;
+  border: 1px solid rgb(232 179 111 / 48%);
+  border-radius: 0.5rem;
+  background: #17110f;
+}
+
+.inherited-detail {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgb(232 179 111 / 20%);
+}
+
+.purchase-control {
+  align-items: center;
+  margin-top: 1rem;
+  font-weight: 800;
+}
+
+.secondary-button,
+.text-button {
+  min-height: 2.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.secondary-button {
+  width: 100%;
+  margin-top: 0.5rem;
+  color: #1c130f;
+  border: 1px solid #e8b36f;
+  background: #e8b36f;
+  font-weight: 800;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #ffd28f;
+}
+
+.secondary-button:disabled {
+  color: #8f8171;
+  border-color: #5c5045;
+  background: #2c2520;
+  cursor: not-allowed;
+}
+
+.text-button {
+  padding: 0.35rem 0.6rem;
+  color: #ffb4a8;
+  border: 1px solid rgb(255 157 143 / 42%);
+  background: transparent;
+}
+
+.text-button:hover {
+  background: rgb(255 157 143 / 10%);
+}
+
+.repeatable-entry {
+  margin-top: 0.85rem;
+  padding: 0.85rem;
+  border: 1px dashed rgb(232 179 111 / 35%);
+  border-radius: 0.6rem;
+}
+
+@media (max-width: 760px) {
+  .site-header,
+  .content-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .builder-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ancestry-picker {
+    border-right: 0;
+    border-bottom: 1px solid rgb(232 179 111 / 20%);
+  }
+
+  .ancestry-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ancestry-button {
+    display: grid;
+    align-content: start;
+  }
+
+  .ancestry-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-header,
+  .ancestry-workspace,
+  .ancestry-picker {
+    padding-right: 0.85rem;
+    padding-left: 0.85rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
