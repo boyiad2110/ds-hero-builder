@@ -18,25 +18,22 @@ Core rule:
 
 Use a native Google Sheet in the Owner's designated Drive folder when Owner review is required.
 
-Recommended columns:
+Detailed Reviewer/Owner translation-review rules live in:
 
-- `ID`
-- `Type / Surface`
-- `Canonical English`
-- `Reviewer Suggestion`
-- `Owner Final zh-TW`
-- `Status`
-- `Source / Rule Reference`
-- `Notes`
+- `docs/translation/TRANSLATION-SPEC.md`
 
-The exact columns may evolve when real data reveals a better need, but stable identity + exact English + final Chinese must remain unambiguous.
+That specification controls clean-source usage, row granularity, review statuses, and the Sheet layout. In particular, **Canonical English and Owner Final zh-TW must remain adjacent so the Owner can compare them without horizontal back-and-forth scrolling.**
+
+Do not improvise a different wide-column layout when preparing a translation-review Sheet unless the Owner explicitly approves it.
+
+Stable identity + exact English + final Chinese must always remain unambiguous.
 
 ## Status Model
 
-Recommended values:
+For the Owner-facing translation-review Sheet, use the review states defined in `TRANSLATION-SPEC.md`.
 
-- `Needs Review`
-- `Owner Finalized`
+For later implementation handoff, the workflow may additionally distinguish implementation lifecycle states such as:
+
 - `Mechanical / Derived`
 - `Frozen for Implementation`
 - `Implemented`
