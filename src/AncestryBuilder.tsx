@@ -258,10 +258,12 @@ function TraitCard({ ancestry, trait, children }: TraitCardProps) {
         </div>
         {trait.cost ? <span className="cost-badge">{trait.cost} 點</span> : null}
       </div>
-      <p className="rules-text">
-        {localize(ancestry, trait.id, 'Rules Text', trait.rulesText)}
-      </p>
-      {children}
+      <div className="trait-body">
+        <p className="rules-text">
+          {localize(ancestry, trait.id, 'Rules Text', trait.rulesText)}
+        </p>
+        {children}
+      </div>
     </article>
   )
 }
@@ -495,20 +497,6 @@ export function AncestryBuilder({ onStatusChange }: AncestryBuilderProps) {
                     )}
                   </p>
                 </div>
-                <dl className="budget-card">
-                  <div>
-                    <dt>點數預算</dt>
-                    <dd>{result.pointBudget}</dd>
-                  </div>
-                  <div>
-                    <dt>已使用</dt>
-                    <dd>{result.pointsSpent}</dd>
-                  </div>
-                  <div>
-                    <dt>剩餘</dt>
-                    <dd>{Math.max(0, remainingPoints)}</dd>
-                  </div>
-                </dl>
               </div>
 
               <section className="trait-section" aria-labelledby="signature-title">
@@ -541,14 +529,28 @@ export function AncestryBuilder({ onStatusChange }: AncestryBuilderProps) {
                 </div>
               </section>
 
-              <section className="trait-section" aria-labelledby="purchased-title">
-                <div className="content-heading">
+              <section className="trait-section purchased-section" aria-labelledby="purchased-title">
+                <div className="content-heading purchased-heading">
                   <div>
                     <p className="step-number">自由搭配</p>
                     <h3 id="purchased-title">購買特性</h3>
                   </div>
-                  <p>使用全部族裔點數以完成此步驟。</p>
+                  <dl className="budget-card" aria-live="polite" aria-atomic="true">
+                    <div>
+                      <dt>點數預算</dt>
+                      <dd>{result.pointBudget}</dd>
+                    </div>
+                    <div>
+                      <dt>已使用</dt>
+                      <dd>{result.pointsSpent}</dd>
+                    </div>
+                    <div>
+                      <dt>剩餘</dt>
+                      <dd>{Math.max(0, remainingPoints)}</dd>
+                    </div>
+                  </dl>
                 </div>
+                <p className="purchase-hint">使用全部族裔點數以完成此步驟。</p>
                 <div className="trait-grid">
                   {model.purchasedTraits.map((trait) => {
                     const matchingSelections = selection.traitSelections

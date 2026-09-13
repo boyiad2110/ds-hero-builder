@@ -29,7 +29,8 @@ function selectAncestry(name: string) {
 }
 
 function expectBudgetValue(label: string, value: number) {
-  const budgetItem = screen.getByText(label).closest('div')
+  const purchaseSection = screen.getByRole('region', { name: '購買特性' })
+  const budgetItem = within(purchaseSection).getByText(label).closest('div')
   expect(budgetItem).not.toBeNull()
   expect(within(budgetItem!).getByText(String(value))).toBeInTheDocument()
 }
