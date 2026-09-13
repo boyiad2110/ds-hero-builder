@@ -42,19 +42,19 @@ describe('Character creation app shell', () => {
     const stepButtons = within(navigation).getAllByRole('button')
     const ancestryStep = within(navigation).getByRole('button', { name: /族裔.*Ancestry/i })
 
-    expect(stepButtons).toHaveLength(8)
+    expect(stepButtons).toHaveLength(6)
+    expect(screen.getAllByRole('navigation')).toHaveLength(1)
+    expect(screen.queryByRole('complementary')).not.toBeInTheDocument()
     expect(ancestryStep).toBeEnabled()
     expect(ancestryStep).toHaveAttribute('aria-current', 'step')
     expect(ancestryStep).toHaveTextContent('未完成')
 
     for (const futureStep of [
-      'Character',
       'Culture',
       'Career',
       'Class',
       'Kit',
       'Complication',
-      'Title',
     ]) {
       const button = within(navigation).getByRole('button', {
         name: new RegExp(`${futureStep}.*尚未開放`, 'i'),
@@ -63,8 +63,10 @@ describe('Character creation app shell', () => {
       fireEvent.click(button)
     }
 
+    const main = screen.getByRole('main')
+    expect(within(main).getByRole('region', { name: '選擇族裔' })).toBeInTheDocument()
     expect(
-      within(screen.getByRole('main')).getByRole('heading', {
+      within(main).getByRole('heading', {
         level: 2,
         name: /族裔.*Ancestry/i,
       }),
@@ -106,7 +108,7 @@ describe('Ancestry creation UI', () => {
         name: /族裔.*Ancestry/i,
       }),
     ).toHaveTextContent('已完成')
-    expect(screen.getByText('已完成 1 / 8 個步驟')).toBeInTheDocument()
+    expect(screen.getByLabelText('創角進度 1 / 6')).toHaveTextContent('1 / 6')
     expectBudgetValue('點數預算', 3)
     expectBudgetValue('已使用', 3)
     expectBudgetValue('剩餘', 0)

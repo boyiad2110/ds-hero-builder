@@ -101,25 +101,29 @@ a:focus-visible {
 }
 
 .creation-progress {
-  display: grid;
-  gap: 0.2rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.65rem;
   margin: 0;
   text-align: right;
 }
 
 .creation-progress span {
-  color: #ffd28f;
-  font-weight: 800;
+  color: #bcae9d;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
-.creation-progress small {
-  color: #c9b9a4;
+.creation-progress strong {
+  color: #f0e5d6;
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .eyebrow,
 .step-number {
   margin: 0 0 0.35rem;
-  color: #e8b36f;
+  color: #bcae9d;
   font-size: 0.75rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -275,7 +279,7 @@ a:focus-visible {
   gap: 1.5rem;
   padding: 1.25rem clamp(1rem, 3vw, 2rem);
   border-bottom: 1px solid rgb(232 179 111 / 20%);
-  background: rgb(31 23 20 / 64%);
+  background: rgb(31 23 20 / 42%);
 }
 
 .current-step-header h2 {
@@ -293,25 +297,23 @@ a:focus-visible {
 }
 
 .ancestry-builder {
-  display: grid;
-  grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  min-width: 0;
 }
 
 .ancestry-picker {
-  padding: 1.75rem clamp(1rem, 2.5vw, 2rem);
-  border-right: 1px solid rgb(232 179 111 / 20%);
-  background: rgb(31 23 20 / 78%);
+  padding: 1.5rem clamp(1rem, 3vw, 2.5rem);
+  border-bottom: 1px solid rgb(232 179 111 / 14%);
+  background: rgb(31 23 20 / 32%);
 }
 
 .section-heading {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.8rem;
 }
 
 .section-heading h3 {
   font-size: 1.55rem;
 }
 
-.section-heading > p:last-child,
 .english-name,
 .ancestry-intro h3 small,
 .option-name small {
@@ -325,7 +327,8 @@ a:focus-visible {
 
 .ancestry-list {
   display: grid;
-  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: 0.4rem;
 }
 
 .ancestry-button {
@@ -334,9 +337,9 @@ a:focus-visible {
   justify-content: space-between;
   gap: 0.75rem;
   width: 100%;
-  min-height: 2.9rem;
-  padding: 0.65rem 0.8rem;
-  color: #f6ead8;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.7rem;
+  color: #e8ded1;
   text-align: left;
   border: 1px solid transparent;
   border-radius: 0.55rem;
@@ -362,13 +365,13 @@ a:focus-visible {
 
 .ancestry-workspace {
   min-width: 0;
-  padding: clamp(1.25rem, 4vw, 3.5rem);
+  padding: clamp(1.25rem, 3vw, 2.5rem);
 }
 
 .empty-state {
   display: grid;
   max-width: 38rem;
-  min-height: 60vh;
+  min-height: 45vh;
   align-content: center;
   justify-items: start;
 }
@@ -378,14 +381,6 @@ a:focus-visible {
 .content-heading > p {
   color: #c9b9a4;
   line-height: 1.7;
-}
-
-.empty-mark {
-  margin: 0 0 1rem;
-  color: #e8b36f;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 4rem;
-  line-height: 1;
 }
 
 .ancestry-intro {
@@ -398,8 +393,8 @@ a:focus-visible {
 }
 
 .ancestry-intro h3 {
-  font-size: clamp(2.1rem, 6vw, 4.25rem);
-  line-height: 1;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.08;
 }
 
 .ancestry-intro h3 small {
@@ -473,12 +468,13 @@ a:focus-visible {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
   gap: 1rem;
+  align-items: start;
 }
 
 .trait-card {
   min-width: 0;
   padding: 1.1rem;
-  border: 1px solid rgb(232 179 111 / 24%);
+  border: 1px solid rgb(232 179 111 / 16%);
   border-radius: 0.8rem;
   background: rgb(35 26 22 / 88%);
 }
@@ -516,7 +512,7 @@ a:focus-visible {
 
 .rules-text {
   margin: 0.85rem 0;
-  color: #dfd0bc;
+  color: #e5dcd0;
   line-height: 1.65;
   overflow-wrap: anywhere;
   white-space: pre-line;
@@ -530,9 +526,9 @@ a:focus-visible {
 .choice-group {
   min-width: 0;
   margin: 1rem 0 0;
-  padding: 0.9rem;
-  border: 1px solid rgb(232 179 111 / 28%);
-  border-radius: 0.65rem;
+  padding: 0.9rem 0 0;
+  border: 0;
+  border-top: 1px solid rgb(232 179 111 / 15%);
 }
 
 .choice-group legend,
@@ -550,6 +546,7 @@ a:focus-visible {
 
 .option-grid {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
   gap: 0.45rem;
 }
 
@@ -558,22 +555,23 @@ a:focus-visible {
   display: flex;
   gap: 0.7rem;
   align-items: start;
-  padding: 0.7rem;
-  border: 1px solid rgb(232 179 111 / 18%);
+  padding: 0.55rem 0.65rem;
+  border: 1px solid transparent;
   border-radius: 0.5rem;
+  background: rgb(255 255 255 / 3%);
   cursor: pointer;
 }
 
 .option-control:hover,
 .purchase-control:hover {
-  border-color: rgb(232 179 111 / 55%);
-  background: rgb(232 179 111 / 7%);
+  border-color: rgb(232 179 111 / 28%);
+  background: rgb(255 255 255 / 6%);
 }
 
 .option-control:has(input:checked),
 .purchase-control:has(input:checked) {
-  border-color: #e8b36f;
-  background: rgb(232 179 111 / 12%);
+  border-color: rgb(232 179 111 / 55%);
+  background: rgb(232 179 111 / 10%);
 }
 
 .option-control:has(input:disabled),
@@ -664,9 +662,8 @@ a:focus-visible {
 
 .repeatable-entry {
   margin-top: 0.85rem;
-  padding: 0.85rem;
-  border: 1px dashed rgb(232 179 111 / 35%);
-  border-radius: 0.6rem;
+  padding: 0.85rem 0 0;
+  border-top: 1px solid rgb(232 179 111 / 18%);
 }
 
 @media (max-width: 980px) {
@@ -690,19 +687,6 @@ a:focus-visible {
   .content-heading {
     align-items: stretch;
     flex-direction: column;
-  }
-
-  .creation-progress {
-    text-align: left;
-  }
-
-  .ancestry-builder {
-    grid-template-columns: 1fr;
-  }
-
-  .ancestry-picker {
-    border-right: 0;
-    border-bottom: 1px solid rgb(232 179 111 / 20%);
   }
 
   .ancestry-list {

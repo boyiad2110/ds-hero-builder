@@ -2,13 +2,11 @@ import type { ReactNode } from 'react'
 
 export type CharacterCreationStepId =
   | 'ancestry'
-  | 'character'
   | 'culture'
   | 'career'
   | 'class'
   | 'kit'
   | 'complication'
-  | 'title'
 
 export type CharacterCreationStepStatus = 'incomplete' | 'complete' | 'invalid'
 
@@ -47,7 +45,6 @@ export function CharacterCreationShell({
     throw new Error(`Active character-creation step is unavailable: ${activeStepId}`)
   }
 
-  const activeStepIndex = steps.indexOf(activeStep)
   const completedStepCount = steps.filter(
     ({ availability, status }) => availability === 'available' && status === 'complete',
   ).length
@@ -62,11 +59,14 @@ export function CharacterCreationShell({
           <p className="eyebrow">Draw Steel 1 級創角工具</p>
           <h1 translate="no">DS Hero Builder</h1>
         </div>
-        <p className="creation-progress">
-          <span>角色建立</span>
-          <small>
-            已完成 {completedStepCount} / {steps.length} 個步驟
-          </small>
+        <p
+          className="creation-progress"
+          aria-label={`創角進度 ${completedStepCount} / ${steps.length}`}
+        >
+          <span>創角進度</span>
+          <strong>
+            {completedStepCount} / {steps.length}
+          </strong>
         </p>
       </header>
 
@@ -114,9 +114,6 @@ export function CharacterCreationShell({
         <main className="current-step" id="current-creation-step" tabIndex={-1}>
           <header className="current-step-header">
             <div>
-              <p className="step-number">
-                目前步驟 {activeStepIndex + 1} / {steps.length}
-              </p>
               <h2>
                 {activeStep.displayName ? <span>{activeStep.displayName}</span> : null}
                 <small lang="en" translate="no">

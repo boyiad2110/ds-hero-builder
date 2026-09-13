@@ -14,13 +14,11 @@ const CHARACTER_CREATION_STEPS = [
     displayName: '族裔',
     availability: 'available',
   },
-  { id: 'character', canonicalName: 'Character', availability: 'unavailable' },
   { id: 'culture', canonicalName: 'Culture', availability: 'unavailable' },
   { id: 'career', canonicalName: 'Career', availability: 'unavailable' },
   { id: 'class', canonicalName: 'Class', availability: 'unavailable' },
   { id: 'kit', canonicalName: 'Kit', availability: 'unavailable' },
   { id: 'complication', canonicalName: 'Complication', availability: 'unavailable' },
-  { id: 'title', canonicalName: 'Title', availability: 'unavailable' },
 ] as const satisfies readonly Omit<CharacterCreationStep, 'status'>[]
 
 type StepStatusReport = Readonly<{
