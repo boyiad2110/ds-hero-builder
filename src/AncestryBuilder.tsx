@@ -421,6 +421,9 @@ export function AncestryBuilder({ onStatusChange }: AncestryBuilderProps) {
       <section className="ancestry-picker" aria-labelledby="ancestry-picker-title">
         <div className="section-heading">
           <h3 id="ancestry-picker-title">選擇族裔</h3>
+          <span className="ancestry-count" aria-hidden="true">
+            12
+          </span>
         </div>
         <div className="ancestry-list">
           {ANCESTRY_CREATION_MODELS.map((ancestryModel) => {
@@ -454,6 +457,16 @@ export function AncestryBuilder({ onStatusChange }: AncestryBuilderProps) {
       <section className="ancestry-workspace" aria-labelledby="ancestry-title">
           {!model || !selection || !ancestryLocalization || !result ? (
             <div className="empty-state">
+              <svg
+                className="empty-emblem"
+                viewBox="0 0 64 64"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+                aria-hidden="true"
+              >
+                <path d="M32 3 58 18v28L32 61 6 46V18Z M32 3v58 M6 18l52 28 M58 18 6 46 M6 18h52 M6 46h52" />
+              </svg>
               <h3 id="ancestry-title">從 12 個族裔中選擇 1 個</h3>
               <p>選擇後即可查看族裔說明、固定特性與可購買特性。</p>
             </div>

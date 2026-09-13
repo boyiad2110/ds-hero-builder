@@ -55,19 +55,39 @@ export function CharacterCreationShell({
         跳至目前創角步驟
       </a>
       <header className="site-header">
-        <div>
-          <p className="eyebrow">Draw Steel 1 級創角工具</p>
-          <h1 translate="no">DS Hero Builder</h1>
+        <div className="brand-lockup">
+          <span className="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 28 32" fill="none" stroke="currentColor" strokeWidth="1.3">
+              <path d="M14 2 25 8v14l-11 8L3 22V8Z M14 2v28 M3 8l22 14 M25 8 3 22" />
+            </svg>
+          </span>
+          <div>
+            <p className="eyebrow">Draw Steel 1 級創角工具</p>
+            <h1 translate="no">DS Hero Builder</h1>
+          </div>
         </div>
-        <p
+        <div
           className="creation-progress"
+          role="group"
           aria-label={`創角進度 ${completedStepCount} / ${steps.length}`}
         >
           <span>創角進度</span>
           <strong>
             {completedStepCount} / {steps.length}
           </strong>
-        </p>
+          <div className="progress-segments" aria-hidden="true">
+            {steps.map((step) => (
+              <span
+                key={step.id}
+                className={
+                  step.availability === 'available' && step.status === 'complete'
+                    ? 'filled'
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        </div>
       </header>
 
       <div className="creation-shell">
